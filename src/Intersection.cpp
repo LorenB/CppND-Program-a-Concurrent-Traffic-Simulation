@@ -90,7 +90,6 @@ void Intersection::addVehicleToQueue(std::shared_ptr<Vehicle> vehicle)
     while(_trafficLight.getCurrentPhase() != TrafficLightPhase::green) {
         _trafficLight.waitForGreen();
     }    
-    
     lck.unlock();
 }
 
