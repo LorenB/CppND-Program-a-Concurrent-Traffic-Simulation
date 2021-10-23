@@ -61,6 +61,11 @@ void TrafficLight::simulate()
     threads.emplace_back(std::thread(&TrafficLight::cycleThroughPhases, this));
 }
 
+TrafficLightPhase TrafficLight::getNextPhase(TrafficLightPhase currentPhase)
+{
+    return static_cast<TrafficLightPhase>((currentPhase + 1) % 2);
+}
+
 // virtual function which is executed in a thread
 void TrafficLight::cycleThroughPhases()
 {
@@ -87,16 +92,12 @@ void TrafficLight::cycleThroughPhases()
 
         long timeSinceLastUpdate = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - lastUpdate).count();
         
-        if (timeSinceLastUpdate % 1000 == 0)
-        {
-            std::cout << "timeSinceLastUpdate: " << timeSinceLastUpdate << std::endl;
-        }
         if (timeSinceLastUpdate >= cycleDuration) {
             // reset stop watch for next cycle
             lastUpdate = std::chrono::system_clock::now();
             cycleDuration = -1;
             std::unique_lock<std::mutex> lock(_mutex);
-            _currentPhase = static_cast<TrafficLightPhase>((_currentPhase + 1) % 2);
+            _currentPhase = TrafficLight::getNextPhase(_currentPhase);
             lock.unlock();
             std::cout << "light is now: " << _currentPhase << std::endl;
             _phase_queue.send(std::move(_currentPhase));
