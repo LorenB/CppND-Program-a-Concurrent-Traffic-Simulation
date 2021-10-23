@@ -66,6 +66,14 @@ TrafficLightPhase TrafficLight::getNextPhase(TrafficLightPhase currentPhase)
     return static_cast<TrafficLightPhase>((currentPhase + 1) % 2);
 }
 
+double TrafficLight::getCycleDuration()
+{
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist(4000, 6000);
+    return dist(rng);
+}
+
 // virtual function which is executed in a thread
 void TrafficLight::cycleThroughPhases()
 {
@@ -83,11 +91,7 @@ void TrafficLight::cycleThroughPhases()
         // sleep at every iteration to reduce CPU usage
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         if (cycleDuration < 0) {
-            std::random_device dev;
-            std::mt19937 rng(dev());
-            std::uniform_int_distribution<std::mt19937::result_type> dist(4000, 6000);
-            cycleDuration = dist(rng);
-            std::cout << "cycleDuration: " << cycleDuration << std::endl;
+            cycleDuration = getCycleDuration();
         }
 
         long timeSinceLastUpdate = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - lastUpdate).count();
