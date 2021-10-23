@@ -103,7 +103,7 @@ void TrafficLight::cycleThroughPhases()
             std::unique_lock<std::mutex> lock(_mutex);
             _currentPhase = TrafficLight::getNextPhase(_currentPhase);
             lock.unlock();
-            std::cout << "light is now: " << _currentPhase << std::endl;
+            std::cout << "traffic light #" << _id << " is now: " << ((_currentPhase == TrafficLightPhase::green) ? "green" : "red")  << std::endl;
             _phase_queue.send(std::move(_currentPhase));
         }
 
