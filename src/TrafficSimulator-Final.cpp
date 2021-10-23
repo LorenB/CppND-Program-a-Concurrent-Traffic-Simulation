@@ -7,8 +7,6 @@
 #include "Intersection.h"
 #include "Graphics.h"
 
-#include "TrafficLight.h"
-
 
 // Paris
 void createTrafficObjects_Paris(std::vector<std::shared_ptr<Street>> &streets, std::vector<std::shared_ptr<Intersection>> &intersections, std::vector<std::shared_ptr<Vehicle>> &vehicles, std::string &filename, int nVehicles)
@@ -117,48 +115,45 @@ void createTrafficObjects_NYC(std::vector<std::shared_ptr<Street>> &streets, std
 /* Main function */
 int main()
 {
-    TrafficLight _trafficLight;
-    _trafficLight.simulate();
-    // /* PART 1 : Set up traffic objects */
+    /* PART 1 : Set up traffic objects */
 
-    // // create and connect intersections and streets
-    // std::vector<std::shared_ptr<Street>> streets;
-    // std::vector<std::shared_ptr<Intersection>> intersections;
-    // std::vector<std::shared_ptr<Vehicle>> vehicles;
-    // std::string backgroundImg;
-    // int nVehicles = 6;
-    // createTrafficObjects_Paris(streets, intersections, vehicles, backgroundImg, nVehicles);
+    // create and connect intersections and streets
+    std::vector<std::shared_ptr<Street>> streets;
+    std::vector<std::shared_ptr<Intersection>> intersections;
+    std::vector<std::shared_ptr<Vehicle>> vehicles;
+    std::string backgroundImg;
+    int nVehicles = 6;
+    createTrafficObjects_Paris(streets, intersections, vehicles, backgroundImg, nVehicles);
 
-    // /* PART 2 : simulate traffic objects */
+    /* PART 2 : simulate traffic objects */
 
-    // // simulate intersection
-    // std::for_each(intersections.begin(), intersections.end(), [](std::shared_ptr<Intersection> &i) {
-    //     i->simulate();
-    // });
+    // simulate intersection
+    std::for_each(intersections.begin(), intersections.end(), [](std::shared_ptr<Intersection> &i) {
+        i->simulate();
+    });
 
-    // // simulate vehicles
-    // std::for_each(vehicles.begin(), vehicles.end(), [](std::shared_ptr<Vehicle> &v) {
-    //     v->simulate();
-    // });
+    // simulate vehicles
+    std::for_each(vehicles.begin(), vehicles.end(), [](std::shared_ptr<Vehicle> &v) {
+        v->simulate();
+    });
 
-    // /* PART 3 : Launch visualization */
+    /* PART 3 : Launch visualization */
 
-    // // add all objects into common vector
-    // std::vector<std::shared_ptr<TrafficObject>> trafficObjects;
-    // std::for_each(intersections.begin(), intersections.end(), [&trafficObjects](std::shared_ptr<Intersection> &intersection) {
-    //     std::shared_ptr<TrafficObject> trafficObject = std::dynamic_pointer_cast<TrafficObject>(intersection);
-    //     trafficObjects.push_back(trafficObject);
-    // });
+    // add all objects into common vector
+    std::vector<std::shared_ptr<TrafficObject>> trafficObjects;
+    std::for_each(intersections.begin(), intersections.end(), [&trafficObjects](std::shared_ptr<Intersection> &intersection) {
+        std::shared_ptr<TrafficObject> trafficObject = std::dynamic_pointer_cast<TrafficObject>(intersection);
+        trafficObjects.push_back(trafficObject);
+    });
 
-    // std::for_each(vehicles.begin(), vehicles.end(), [&trafficObjects](std::shared_ptr<Vehicle> &vehicles) {
-    //     std::shared_ptr<TrafficObject> trafficObject = std::dynamic_pointer_cast<TrafficObject>(vehicles);
-    //     trafficObjects.push_back(trafficObject);
-    // });
+    std::for_each(vehicles.begin(), vehicles.end(), [&trafficObjects](std::shared_ptr<Vehicle> &vehicles) {
+        std::shared_ptr<TrafficObject> trafficObject = std::dynamic_pointer_cast<TrafficObject>(vehicles);
+        trafficObjects.push_back(trafficObject);
+    });
 
-    // // draw all objects in vector
-    // Graphics *graphics = new Graphics();
-    // graphics->setBgFilename(backgroundImg);
-    // graphics->setTrafficObjects(trafficObjects);
-    // graphics->simulate();
-
+    // draw all objects in vector
+    Graphics *graphics = new Graphics();
+    graphics->setBgFilename(backgroundImg);
+    graphics->setTrafficObjects(trafficObjects);
+    graphics->simulate();
 }
