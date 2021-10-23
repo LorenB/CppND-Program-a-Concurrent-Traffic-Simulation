@@ -72,27 +72,42 @@ void TrafficLight::cycleThroughPhases()
 
     // init stop watch
     lastUpdate = std::chrono::system_clock::now();
-    double cycleDuration = -1;
+    // double cycleDuration = -1;
+    double cycleDuration = 1; // duration of a single simulation cycle in ms
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist(4000, 6000);
+    cycleDuration = dist(rng);
+    std::unique_lock<std::mutex> lock(_mutex);
+    std::cout << "cycleDuration: " << cycleDuration << std::endl;
+    lock.unlock();
     while(true) {
         // sleep at every iteration to reduce CPU usage
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        if (cycleDuration < 0) {
-            std::random_device dev;
-            std::mt19937 rng(dev());
-            std::uniform_int_distribution<std::mt19937::result_type> dist(4000, 6000);
-            cycleDuration = dist(rng);
-        }
+        // if (cycleDuration < 0) {
+        //     std::random_device dev;
+        //     std::mt19937 rng(dev());
+        //     std::uniform_int_distribution<std::mt19937::result_type> dist(4000, 6000);
+        //     cycleDuration = dist(rng);
+        //     std::cout << "cycleDuration: " << cycleDuration << std::endl;
+        // }
 
         long timeSinceLastUpdate = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - lastUpdate).count();
-
+        
+        if (timeSinceLastUpdate % 1000 == 0)
+        {
+            std::cout << "timeSinceLastUpdate: " << timeSinceLastUpdate << std::endl;
+        }
         if (timeSinceLastUpdate >= cycleDuration) {
-            cycleDuration = -1;
+            // reset stop watch for next cycle
+            lastUpdate = std::chrono::system_clock::now();
+            lock.lock();
             _currentPhase = static_cast<TrafficLightPhase>((_currentPhase + 1) % 2);
-            // TODO: send an update message to the message queue using move semantics
+            lock.unlock();
+            std::cout << "light is now: " << _currentPhase << std::endl;
             _phase_queue.send(std::move(_currentPhase));
         }
-        // reset stop watch for next cycle
-        lastUpdate = std::chrono::system_clock::now();
+
     }
 
 }
